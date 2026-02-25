@@ -1,0 +1,1661 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decafy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .card-flip {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card-flip.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div id="app" class="container mx-auto px-4 py-8 max-w-6xl pb-24">
+        <!-- Header -->
+        <header class="text-center mb-8 fade-in relative">
+            <h1 class="text-4xl font-bold text-indigo-900 mb-2">
+                <i class="fas fa-graduation-cap mr-2"></i>Decafy
+            </h1>
+            <button onclick="document.getElementById('settingsModal').classList.remove('hidden')"
+                class="absolute right-0 top-0 text-gray-400 hover:text-indigo-600 transition-colors pt-2">
+                <i class="fas fa-cog text-2xl"></i>
+            </button>
+            <p class="text-gray-600">Master business concepts for DECA competitions</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="fixed bottom-0 left-0 w-full bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
+            <div class="container mx-auto max-w-6xl flex justify-between md:justify-center md:space-x-4 p-2">
+                <button onclick="showTab('dashboard')"
+                    class="tab-btn flex flex-col md:flex-row items-center justify-center px-2 md:px-4 py-2 rounded-md font-medium transition-all duration-200 hover:bg-indigo-50 flex-1 md:flex-none"
+                    data-tab="dashboard">
+                    <i class="fas fa-home md:mr-2 text-xl md:text-base mb-1 md:mb-0"></i><span
+                        class="text-[10px] sm:text-xs md:text-base">Home</span>
+                </button>
+                <button onclick="showTab('flashcards')"
+                    class="tab-btn flex flex-col md:flex-row items-center justify-center px-2 md:px-4 py-2 rounded-md font-medium transition-all duration-200 hover:bg-indigo-50 flex-1 md:flex-none"
+                    data-tab="flashcards">
+                    <i class="fas fa-layer-group md:mr-2 text-xl md:text-base mb-1 md:mb-0"></i><span
+                        class="text-[10px] sm:text-xs md:text-base">Flashcards</span>
+                </button>
+                <button onclick="showTab('quiz')"
+                    class="tab-btn flex flex-col md:flex-row items-center justify-center px-2 md:px-4 py-2 rounded-md font-medium transition-all duration-200 hover:bg-indigo-50 flex-1 md:flex-none"
+                    data-tab="quiz">
+                    <i class="fas fa-list-check md:mr-2 text-xl md:text-base mb-1 md:mb-0"></i><span
+                        class="text-[10px] sm:text-xs md:text-base">Practice Quiz</span>
+                </button>
+                <button onclick="showTab('roleplays')"
+                    class="tab-btn flex flex-col md:flex-row items-center justify-center px-2 md:px-4 py-2 rounded-md font-medium transition-all duration-200 hover:bg-indigo-50 flex-1 md:flex-none"
+                    data-tab="roleplays">
+                    <i class="fas fa-user-tie md:mr-2 text-xl md:text-base mb-1 md:mb-0"></i><span
+                        class="text-[10px] sm:text-xs md:text-base">Roleplays</span>
+                </button>
+                <button onclick="showTab('resources')"
+                    class="tab-btn flex flex-col md:flex-row items-center justify-center px-2 md:px-4 py-2 rounded-md font-medium transition-all duration-200 hover:bg-indigo-50 flex-1 md:flex-none"
+                    data-tab="resources">
+                    <i class="fas fa-book md:mr-2 text-xl md:text-base mb-1 md:mb-0"></i><span
+                        class="text-[10px] sm:text-xs md:text-base">Resources</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Progress Cards -->
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Marketing</h3>
+                        <i class="fas fa-chart-line text-blue-500 text-2xl"></i>
+                    </div>
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
+                            <circle cx="48" cy="48" r="36" stroke="#3b82f6" stroke-width="8" fill="none"
+                                stroke-dasharray="226" stroke-dashoffset="68" stroke-linecap="round" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xl font-bold text-gray-800">70%</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-600">42/60 cards mastered</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Finance</h3>
+                        <i class="fas fa-dollar-sign text-green-500 text-2xl"></i>
+                    </div>
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
+                            <circle cx="48" cy="48" r="36" stroke="#10b981" stroke-width="8" fill="none"
+                                stroke-dasharray="226" stroke-dashoffset="113" stroke-linecap="round" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xl font-bold text-gray-800">50%</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-600">30/60 cards mastered</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Hospitality</h3>
+                        <i class="fas fa-hotel text-purple-500 text-2xl"></i>
+                    </div>
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
+                            <circle cx="48" cy="48" r="36" stroke="#8b5cf6" stroke-width="8" fill="none"
+                                stroke-dasharray="226" stroke-dashoffset="90" stroke-linecap="round" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xl font-bold text-gray-800">60%</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-600">36/60 cards mastered</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Entrepreneurship</h3>
+                        <i class="fas fa-lightbulb text-yellow-500 text-2xl"></i>
+                    </div>
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
+                            <circle cx="48" cy="48" r="36" stroke="#eab308" stroke-width="8" fill="none"
+                                stroke-dasharray="226" stroke-dashoffset="45" stroke-linecap="round" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xl font-bold text-gray-800">80%</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-600">48/60 cards mastered</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Business Management</h3>
+                        <i class="fas fa-briefcase text-indigo-500 text-2xl"></i>
+                    </div>
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
+                            <circle cx="48" cy="48" r="36" stroke="#6366f1" stroke-width="8" fill="none"
+                                stroke-dasharray="226" stroke-dashoffset="180" stroke-linecap="round" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xl font-bold text-gray-800">20%</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-600">12/60 cards mastered</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Personal Finance</h3>
+                        <i class="fas fa-piggy-bank text-pink-500 text-2xl"></i>
+                    </div>
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
+                            <circle cx="48" cy="48" r="36" stroke="#ec4899" stroke-width="8" fill="none"
+                                stroke-dasharray="226" stroke-dashoffset="203" stroke-linecap="round" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xl font-bold text-gray-800">10%</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-gray-600">6/60 cards mastered</p>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-history mr-2"></i>Recent Study Activity
+                </h2>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            <span class="font-medium">Completed Marketing Quiz</span>
+                        </div>
+                        <span class="text-gray-500 text-sm">2 hours ago</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-layer-group text-blue-500 mr-3"></i>
+                            <span class="font-medium">Studied Finance Flashcards</span>
+                        </div>
+                        <span class="text-gray-500 text-sm">5 hours ago</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-trophy text-yellow-500 mr-3"></i>
+                            <span class="font-medium">Achieved 85% on Entrepreneurship Quiz</span>
+                        </div>
+                        <span class="text-gray-500 text-sm">Yesterday</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcards Tab -->
+        <div id="flashcards" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-layer-group mr-2"></i>Study Flashcards
+                    </h2>
+                    <select id="categorySelect"
+                        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="marketing">Marketing</option>
+                        <option value="finance">Finance</option>
+                        <option value="hospitality">Hospitality</option>
+                        <option value="entrepreneurship">Entrepreneurship</option>
+                        <option value="management">Business Management</option>
+                        <option value="personal_finance">Personal Financial Literacy</option>
+                    </select>
+                </div>
+
+                <!-- Flashcard Container -->
+                <div class="max-w-2xl mx-auto">
+                    <div class="relative h-80 mb-6">
+                        <div id="flashcard" class="card-flip absolute w-full h-full cursor-pointer"
+                            onclick="flipCard()">
+                            <div
+                                class="card-front bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg p-8 flex items-center justify-center">
+                                <div class="text-center text-white">
+                                    <p id="cardQuestion" class="text-xl font-medium">What is the definition of
+                                        marketing?</p>
+                                </div>
+                            </div>
+                            <div
+                                class="card-back bg-gradient-to-br from-green-500 to-teal-600 rounded-xl shadow-lg p-8 flex items-center justify-center">
+                                <div class="text-center text-white">
+                                    <p id="cardAnswer" class="text-lg">The process of promoting and selling products or
+                                        services, including market research and advertising.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Navigation -->
+                    <div class="flex justify-center items-center space-x-4 mb-6">
+                        <button onclick="previousCard()"
+                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            <i class="fas fa-chevron-left mr-2"></i>Previous
+                        </button>
+                        <span id="cardCounter" class="text-gray-600 font-medium">1 / 60</span>
+                        <button onclick="nextCard()"
+                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            Next<i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+
+                    <!-- Difficulty Buttons -->
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="markCard('easy')"
+                            class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                            <i class="fas fa-check mr-2"></i>Easy
+                        </button>
+                        <button onclick="markCard('medium')"
+                            class="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
+                            <i class="fas fa-minus mr-2"></i>Medium
+                        </button>
+                        <button onclick="markCard('hard')"
+                            class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                            <i class="fas fa-times mr-2"></i>Hard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="quiz" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-question-circle mr-2"></i>Practice Quiz
+                </h2>
+
+                <!-- Quiz Start Screen -->
+                <div id="quizStart" class="text-center py-12">
+                    <i class="fas fa-graduation-cap text-6xl text-indigo-500 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-4">Test Your Knowledge</h3>
+                    <p class="text-gray-600 mb-6">Select a mode and category to begin</p>
+
+                    <!-- Mode Selection Cards -->
+                    <div class="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8">
+                        <div id="modeCardSingle" onclick="selectQuizMode('single')"
+                            class="cursor-pointer border-2 border-indigo-500 bg-indigo-50 rounded-xl p-6 transition-all hover:shadow-lg">
+                            <i class="fas fa-arrow-right text-3xl text-indigo-500 mb-3"></i>
+                            <h4 class="text-lg font-bold text-indigo-700 mb-1">One-by-One</h4>
+                            <p class="text-sm text-gray-600">Answer each question and get instant feedback with
+                                explanations</p>
+                        </div>
+                        <div id="modeCardBenchmark" onclick="selectQuizMode('benchmark')"
+                            class="cursor-pointer border-2 border-gray-200 bg-white rounded-xl p-6 transition-all hover:shadow-lg">
+                            <i class="fas fa-list-ol text-3xl text-gray-400 mb-3"></i>
+                            <h4 class="text-lg font-bold text-gray-700 mb-1">100-Question Benchmark</h4>
+                            <p class="text-sm text-gray-600">Timed 90-minute exam — answer all questions, then review
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="startQuiz('marketing')"
+                            class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all transform hover:scale-105 shadow">
+                            <i class="fas fa-chart-line mr-2"></i>Marketing
+                        </button>
+                        <button onclick="startQuiz('finance')"
+                            class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all transform hover:scale-105 shadow">
+                            <i class="fas fa-dollar-sign mr-2"></i>Finance
+                        </button>
+                        <button onclick="startQuiz('hospitality')"
+                            class="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all transform hover:scale-105 shadow">
+                            <i class="fas fa-hotel mr-2"></i>Hospitality
+                        </button>
+                        <button onclick="startQuiz('entrepreneurship')"
+                            class="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all transform hover:scale-105 shadow">
+                            <i class="fas fa-lightbulb mr-2"></i>Entrepreneurship
+                        </button>
+                        <button onclick="startQuiz('management')"
+                            class="px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-all transform hover:scale-105 shadow">
+                            <i class="fas fa-briefcase mr-2"></i>Business Mgmt
+                        </button>
+                        <button onclick="startQuiz('personal_finance')"
+                            class="px-6 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all transform hover:scale-105 shadow">
+                            <i class="fas fa-piggy-bank mr-2"></i>Personal Finance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz In-Progress Screen (both modes) -->
+                <div id="quizContent" class="hidden">
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-600">
+                                Question <span id="questionNumber">1</span> of <span id="totalQuestions">10</span>
+                            </span>
+                            <div class="flex items-center space-x-3">
+                                <span id="quizModeLabel"
+                                    class="text-xs font-semibold uppercase tracking-wide px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">One-by-One</span>
+                                <div class="flex items-center space-x-1">
+                                    <i class="fas fa-clock text-gray-500"></i>
+                                    <span id="timer" class="text-gray-600 font-mono">00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="progressBar" class="bg-indigo-500 h-2 rounded-full transition-all duration-300"
+                                style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Benchmark question navigator -->
+                    <div id="benchmarkNav" class="hidden mb-6">
+                        <button onclick="toggleQuestionGrid()" class="text-sm text-indigo-600 hover:underline mb-2">
+                            <i class="fas fa-th mr-1"></i>Jump to question…
+                        </button>
+                        <div id="questionGrid" class="hidden flex-wrap gap-1 mt-2">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 id="quizQuestion" class="text-xl font-semibold mb-6"></h3>
+                        <div id="quizOptions" class="space-y-3">
+                            <!-- Options dynamically added -->
+                        </div>
+                        <!-- Feedback area (One-by-One mode) -->
+                        <div id="feedbackArea" class="hidden mt-6 rounded-lg p-4">
+                            <div id="feedbackIcon" class="text-2xl mb-2"></div>
+                            <p id="feedbackText" class="font-semibold mb-1"></p>
+                            <p id="feedbackExplanation" class="text-sm text-gray-700"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <button id="btnPrevQuestion" onclick="previousQuestion()"
+                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            <i class="fas fa-chevron-left mr-2"></i>Previous
+                        </button>
+                        <button id="btnNextQuestion" onclick="nextQuestion()"
+                            class="px-6 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">
+                            Next<i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                        <button id="btnSubmitBenchmark" onclick="submitBenchmark()"
+                            class="hidden px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-paper-plane mr-2"></i>Submit Exam
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Results Screen -->
+                <div id="quizResults" class="hidden py-8">
+                    <div class="text-center mb-8">
+                        <i class="fas fa-trophy text-6xl text-yellow-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2">Quiz Complete!</h3>
+                        <p class="text-xl mb-1">Your Score: <span id="quizScore"
+                                class="font-bold text-indigo-600">0/0</span></p>
+                        <p id="quizResultPercent" class="text-gray-500 mb-1"></p>
+                        <p id="quizTimeTaken" class="text-gray-400 text-sm mb-6"></p>
+                        <button onclick="restartQuiz()"
+                            class="px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">
+                            <i class="fas fa-redo mr-2"></i>Take Another Quiz
+                        </button>
+                    </div>
+                    <!-- Wrong-answer review -->
+                    <div id="reviewSection" class="hidden">
+                        <h4 class="text-lg font-bold text-gray-800 mb-4"><i
+                                class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Review Incorrect Answers</h4>
+                        <div id="reviewList" class="space-y-4">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roleplays Tab -->
+        <div id="roleplays" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-user-tie mr-2"></i>Roleplay Practice
+                </h2>
+
+                <!-- Step 1: Select Cluster & Event -->
+                <div id="rpStep1">
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Cluster</label>
+                            <select id="rpClusterSelect"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                onchange="updateEventOptions()">
+                                <option value="">— Select a cluster —</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="finance">Finance</option>
+                                <option value="hospitality">Hospitality &amp; Tourism</option>
+                                <option value="entrepreneurship">Entrepreneurship</option>
+                                <option value="management">Business Management &amp; Administration</option>
+                                <option value="personal_finance">Personal Financial Literacy</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Event</label>
+                            <select id="rpEventSelect"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">— Select an event —</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="generateRoleplay()"
+                            class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg font-semibold">
+                            <i class="fas fa-magic mr-2"></i>Generate Roleplay
+                        </button>
+                        <p class="text-xs text-gray-400 mt-2">Requires an OpenAI API key in Settings</p>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="rpLoading" class="hidden text-center py-16">
+                    <i class="fas fa-spinner fa-spin text-5xl text-indigo-500 mb-4"></i>
+                    <p class="text-gray-600 text-lg">Generating your roleplay scenario…</p>
+                </div>
+
+                <!-- Step 2: Prompt Display & Prep Timer -->
+                <div id="rpStep2" class="hidden">
+                    <div class="mb-6 border border-indigo-200 rounded-xl p-6 bg-indigo-50">
+                        <h3 class="text-lg font-bold text-indigo-900 mb-3"><i class="fas fa-scroll mr-2"></i>Your
+                            Roleplay Prompt</h3>
+                        <div id="rpPromptText" class="text-gray-800 whitespace-pre-line mb-4"></div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-indigo-700 mb-2"><i class="fas fa-bullseye mr-1"></i>Key
+                                    Performance Indicators</h4>
+                                <ul id="rpKPIs" class="list-disc list-inside text-sm text-gray-700 space-y-1"></ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-indigo-700 mb-2"><i class="fas fa-brain mr-1"></i>21st
+                                    Century Skills</h4>
+                                <ul id="rpSkills" class="list-disc list-inside text-sm text-gray-700 space-y-1"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prep Timer -->
+                    <div class="text-center mb-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2">Preparation Time</h4>
+                        <div id="rpPrepTimer" class="text-5xl font-mono font-bold text-indigo-600 mb-3">10:00</div>
+                        <div class="flex justify-center gap-3">
+                            <button onclick="startPrepTimer()" id="rpPrepStartBtn"
+                                class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                                <i class="fas fa-play mr-2"></i>Start Timer
+                            </button>
+                            <button onclick="skipPrepTimer()"
+                                class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                                Skip to Recording
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Recording -->
+                <div id="rpStep3" class="hidden">
+                    <div class="text-center mb-6 border border-red-200 rounded-xl p-6 bg-red-50">
+                        <h3 class="text-lg font-bold text-red-800 mb-2"><i class="fas fa-microphone mr-2"></i>Record
+                            Your Roleplay</h3>
+                        <p class="text-sm text-gray-600 mb-4">Click "Start Recording" and speak your response. Your
+                            speech will be transcribed in real-time.</p>
+                        <div id="rpRecordTimer" class="text-4xl font-mono font-bold text-red-600 mb-4">00:00</div>
+                        <div class="flex justify-center gap-3 mb-4">
+                            <button onclick="startRecording()" id="rpRecordBtn"
+                                class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-lg">
+                                <i class="fas fa-circle mr-2"></i>Start Recording
+                            </button>
+                            <button onclick="stopRecording()" id="rpStopBtn"
+                                class="hidden px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all">
+                                <i class="fas fa-stop mr-2"></i>Stop Recording
+                            </button>
+                        </div>
+                        <div id="rpTranscriptBox"
+                            class="hidden text-left bg-white rounded-lg p-4 shadow-inner max-h-48 overflow-y-auto">
+                            <h4 class="font-semibold text-gray-700 mb-2">Live Transcript</h4>
+                            <p id="rpTranscriptText" class="text-gray-600 text-sm italic">Listening…</p>
+                        </div>
+                    </div>
+                    <div id="rpSubmitArea" class="hidden text-center">
+                        <button onclick="submitToJudge()"
+                            class="px-8 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg hover:from-green-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg font-semibold">
+                            <i class="fas fa-gavel mr-2"></i>Submit to AI Judge
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Judging Loading -->
+                <div id="rpJudgeLoading" class="hidden text-center py-16">
+                    <i class="fas fa-spinner fa-spin text-5xl text-green-500 mb-4"></i>
+                    <p class="text-gray-600 text-lg">The AI Judge is evaluating your performance…</p>
+                </div>
+
+                <!-- Step 4: AI Judge Results -->
+                <div id="rpStep4" class="hidden">
+                    <div class="border border-green-200 rounded-xl p-6 bg-green-50 mb-6">
+                        <h3 class="text-xl font-bold text-green-900 mb-4"><i class="fas fa-gavel mr-2"></i>AI Judge
+                            Feedback</h3>
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="text-center">
+                                <div id="rpScoreCircle"
+                                    class="w-24 h-24 rounded-full border-4 border-green-500 flex items-center justify-center">
+                                    <span id="rpScoreValue" class="text-3xl font-bold text-green-700">0</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">Score / 100</p>
+                            </div>
+                            <div class="flex-1">
+                                <div id="rpFeedbackText" class="text-gray-800 whitespace-pre-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="resetRoleplay()"
+                            class="px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">
+                            <i class="fas fa-redo mr-2"></i>Try Another Roleplay
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources Tab -->
+        <div id="resources" class="tab-content hidden">
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book mr-2"></i>Study Guides
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-blue-800">Marketing Fundamentals</h4>
+                            <p class="text-sm text-gray-600">Core concepts and terminology</p>
+                        </div>
+                        <div class="p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-green-800">Financial Principles</h4>
+                            <p class="text-sm text-gray-600">Understanding business finance</p>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-purple-800">Hospitality Management</h4>
+                            <p class="text-sm text-gray-600">Service industry essentials</p>
+                        </div>
+                        <div class="p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-yellow-800">Entrepreneurship</h4>
+                            <p class="text-sm text-gray-600">Starting and growing businesses</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-video mr-2"></i>Video Resources
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-indigo-800">DECA Competition Tips</h4>
+                            <p class="text-sm text-gray-600">Expert advice for success</p>
+                        </div>
+                        <div class="p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-red-800">Role-Play Strategies</h4>
+                            <p class="text-sm text-gray-600">Master the presentation format</p>
+                        </div>
+                        <div class="p-4 bg-teal-50 rounded-lg hover:bg-teal-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-teal-800">Case Study Analysis</h4>
+                            <p class="text-sm text-gray-600">Problem-solving techniques</p>
+                        </div>
+                        <div class="p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-orange-800">Exam Preparation</h4>
+                            <p class="text-sm text-gray-600">Test-taking strategies</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-trophy mr-2"></i>Competition Events
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-gray-800">Individual Series Events</h4>
+                            <p class="text-sm text-gray-600">Role-play competitions</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-gray-800">Team Decision Making</h4>
+                            <p class="text-sm text-gray-600">Collaborative case studies</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-gray-800">Written Projects</h4>
+                            <p class="text-sm text-gray-600">Business plans and research</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-gray-800">Online Simulations</h4>
+                            <p class="text-sm text-gray-600">Virtual business challenges</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-download mr-2"></i>Downloads
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-gray-800">DECA Glossary</h4>
+                            <p class="text-sm text-gray-600">Complete terminology guide</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-gray-800">Practice Exams</h4>
+                            <p class="text-sm text-gray-600">Sample test questions</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-gray-800">Score Sheets</h4>
+                            <p class="text-sm text-gray-600">Evaluation rubrics</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                            <h4 class="font-semibold text-gray-800">Study Schedule</h4>
+                            <p class="text-sm text-gray-600">Preparation timeline</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center fade-in">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full m-4 relative shadow-2xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800"><i class="fas fa-cog mr-2"></i>Settings</h3>
+                    <button onclick="document.getElementById('settingsModal').classList.add('hidden')"
+                        class="text-gray-500 hover:text-gray-700 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">OpenAI API Key</label>
+                    <p class="text-xs text-gray-500 mb-3">Required for generating AI Roleplays and receiving judge
+                        feedback. Keys are stored locally.</p>
+                    <input type="password" id="apiKeyInput"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="sk-...">
+                </div>
+                <div class="flex justify-end mt-6">
+                    <button onclick="saveSettings()"
+                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                        Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ========================================
+           APP STATE
+        ======================================== */
+        let currentTab = 'dashboard';
+        let currentCardIndex = 0;
+
+        // Quiz state
+        let quizMode = 'single'; // 'single' or 'benchmark'
+        let currentQuizQuestion = 0;
+        let quizScore = 0;
+        let quizCategory = '';
+        let quizTimer = null;
+        let quizStartTime = null;
+        let selectedAnswer = null;
+        let activeQuestions = [];     // the actual question set for the session
+        let userAnswers = [];         // track answers for benchmark review
+        let feedbackShown = false;
+        let benchmarkTimeLimit = 90 * 60; // seconds
+
+        // Roleplay state
+        let rpPrepInterval = null;
+        let rpPrepSecondsLeft = 0;
+        let rpRecordInterval = null;
+        let rpRecordSeconds = 0;
+        let rpRecognition = null;
+        let rpTranscript = '';
+        let rpCurrentPrompt = '';
+
+        /* ========================================
+           FLASHCARD DATA
+        ======================================== */
+        const flashcards = {
+            marketing: [
+                { question: "What is the definition of marketing?", answer: "The process of promoting and selling products or services, including market research and advertising." },
+                { question: "What is a target market?", answer: "A specific group of consumers that a company aims to attract with its products or services." },
+                { question: "What is the marketing mix (4Ps)?", answer: "Product, Price, Place, and Promotion - the four key elements of marketing strategy." },
+                { question: "What is brand positioning?", answer: "The process of creating a unique image and identity for a brand in the consumer's mind." },
+                { question: "What is market segmentation?", answer: "Dividing a broad market into smaller groups of consumers with similar needs or characteristics." }
+            ],
+            finance: [
+                { question: "What is ROI?", answer: "Return on Investment - a measure of the profitability of an investment." },
+                { question: "What is cash flow?", answer: "The movement of money into and out of a business over a period of time." },
+                { question: "What is a balance sheet?", answer: "A financial statement that shows a company's assets, liabilities, and equity at a specific point in time." },
+                { question: "What is profit margin?", answer: "The ratio of profit to revenue, expressed as a percentage." },
+                { question: "What is depreciation?", answer: "The allocation of the cost of an asset over its useful life." }
+            ],
+            hospitality: [
+                { question: "What is service quality?", answer: "The degree to which a service meets or exceeds customer expectations." },
+                { question: "What is yield management?", answer: "The process of understanding, anticipating, and influencing consumer behavior to maximize revenue." },
+                { question: "What is front-of-house?", answer: "The areas of a hospitality business where customers interact with staff." },
+                { question: "What is back-of-house?", answer: "The operational areas of a hospitality business not visible to customers." },
+                { question: "What is RevPAR?", answer: "Revenue Per Available Room - a key performance metric in the hotel industry." }
+            ],
+            entrepreneurship: [
+                { question: "What is a business model?", answer: "The plan for how a company will generate revenue and make a profit." },
+                { question: "What is value proposition?", answer: "The unique value that a product or service provides to customers." },
+                { question: "What is market validation?", answer: "The process of testing whether there is a real market need for a product or service." },
+                { question: "What is bootstrapping?", answer: "Starting and growing a business using only personal finances or operating revenue." },
+                { question: "What is a pitch deck?", answer: "A presentation used to pitch a business idea to potential investors." }
+            ],
+            management: [
+                { question: "What is SWOT analysis?", answer: "Analysis of Strengths, Weaknesses, Opportunities, and Threats." },
+                { question: "What is strategic planning?", answer: "The process of defining a company's direction and making decisions to achieve goals." },
+                { question: "What is organizational structure?", answer: "The arrangement of roles, responsibilities, and relationships within an organization." },
+                { question: "What is KPI?", answer: "Key Performance Indicator - measurable values that demonstrate how effectively a company is achieving objectives." },
+                { question: "What is change management?", answer: "The structured approach to transitioning individuals, teams, and organizations from current state to desired state." }
+            ],
+            personal_finance: [
+                { question: "What is compound interest?", answer: "Interest calculated on the initial principal, which also includes all of the accumulated interest from previous periods." },
+                { question: "What is a credit score?", answer: "A number representing the creditworthiness of a person, based on their credit history." },
+                { question: "What is the 50/30/20 rule?", answer: "A budgeting rule: 50% for needs, 30% for wants, and 20% for savings/debt payoff." },
+                { question: "What is an emergency fund?", answer: "Money set aside to cover unexpected financial surprises or emergencies." },
+                { question: "What is diversification?", answer: "A risk management strategy that mixes a wide variety of investments within a portfolio." }
+            ]
+        };
+
+        /* ========================================
+           QUIZ QUESTION DATA
+        ======================================== */
+        const quizQuestions = {
+            marketing: [
+                { question: "What is the primary goal of marketing research?", options: ["To increase sales", "To gather information about customers and markets", "To create advertising", "To design products"], correct: 1, explanation: "Marketing research provides vital data about target audiences and market trends to aid decision making." },
+                { question: "Which of the following is NOT one of the 4Ps of marketing?", options: ["Product", "Price", "People", "Promotion"], correct: 2, explanation: "The 4Ps are Product, Price, Place, and Promotion. People is part of the extended 7Ps." },
+                { question: "What is demographic segmentation based on?", options: ["Geography", "Age, gender, income", "Personality", "Behavior"], correct: 1, explanation: "Demographics categorize potential customers by objective traits like age, gender, and income." },
+                { question: "What does SWOT stand for in marketing?", options: ["Sales, Wealth, Operations, Taxes", "Strengths, Weaknesses, Opportunities, Threats", "Strategy, Workflow, Outreach, Targeting", "Segmentation, Worth, Optimization, Tracking"], correct: 1, explanation: "SWOT analysis helps marketers assess internal strengths/weaknesses and external opportunities/threats." },
+                { question: "What is a Unique Selling Proposition (USP)?", options: ["A product's price point", "A feature that makes a product stand out from competitors", "A sales report", "A customer complaint"], correct: 1, explanation: "A USP is a specific benefit that makes your product different and more desirable than competitors." },
+                { question: "Which stage of the product life cycle sees the highest profits?", options: ["Introduction", "Growth", "Maturity", "Decline"], correct: 2, explanation: "Maturity is typically when profits are highest because the product is well-established with lower marketing costs." },
+                { question: "What is the purpose of a focus group?", options: ["To sell products", "To gather qualitative feedback from a small group of people", "To train employees", "To invest in stocks"], correct: 1, explanation: "Focus groups collect in-depth opinions, attitudes, and ideas from selected participants." },
+                { question: "What is a marketing channel?", options: ["A TV station", "A pathway through which goods move from producer to consumer", "A social media account", "An advertising jingle"], correct: 1, explanation: "Marketing channels are the routes products take to reach end consumers, including wholesalers and retailers." },
+                { question: "Which pricing strategy sets a high initial price then lowers it?", options: ["Penetration pricing", "Price skimming", "Cost-plus pricing", "Loss leader"], correct: 1, explanation: "Price skimming captures early adopters willing to pay more, then reduces price to reach broader markets." },
+                { question: "What is brand equity?", options: ["The financial value of a company", "The commercial value derived from consumer perception of a brand name", "The number of employees", "The cost of advertising"], correct: 1, explanation: "Brand equity is the added value a well-known brand name gives to a product beyond its functional benefits." }
+            ],
+            finance: [
+                { question: "What does ROI stand for?", options: ["Return on Investment", "Risk of Investment", "Revenue of Investment", "Rate of Interest"], correct: 0, explanation: "ROI measures the gain or loss generated on an investment relative to its initial cost." },
+                { question: "What is a liability?", options: ["Something a company owns", "Something a company owes", "Company revenue", "Company profit"], correct: 1, explanation: "A liability signifies an obligation or debt a company must pay in the future." },
+                { question: "What is the purpose of a budget?", options: ["To increase sales", "To plan and control financial resources", "To hire employees", "To create products"], correct: 1, explanation: "Budgets estimate revenue and expenses over a specified future period." },
+                { question: "What is net income?", options: ["Total revenue", "Revenue minus all expenses", "Total assets", "Cash on hand"], correct: 1, explanation: "Net income is the profit remaining after all expenses, taxes, and costs have been subtracted from total revenue." },
+                { question: "What is a stock?", options: ["A type of bond", "A share of ownership in a company", "A loan to a company", "A savings account"], correct: 1, explanation: "A stock represents partial ownership (equity) in a corporation." },
+                { question: "What is liquidity?", options: ["The taste of a product", "How quickly an asset can be converted to cash", "The total debt of a company", "A type of investment"], correct: 1, explanation: "Liquidity measures the ease with which an asset can be converted into cash without affecting its market price." },
+                { question: "What is accounts receivable?", options: ["Money a company owes to others", "Money owed to a company by its debtors", "Cash in the bank", "Total expenses"], correct: 1, explanation: "Accounts receivable represents money owed by customers for goods or services delivered on credit." },
+                { question: "What does 'break-even point' mean?", options: ["When a company goes bankrupt", "When total costs equal total revenue", "When profits are maximized", "When a product is discontinued"], correct: 1, explanation: "The break-even point is where total revenue equals total costs, resulting in neither profit nor loss." },
+                { question: "What is an income statement?", options: ["A balance sheet", "A financial report showing revenues and expenses over a period", "A tax form", "An employee payroll report"], correct: 1, explanation: "An income statement (or profit & loss statement) summarizes revenues, costs, and expenses during a specific period." },
+                { question: "What is equity in finance?", options: ["A type of debt", "The ownership interest in a company", "A tax obligation", "A type of expense"], correct: 1, explanation: "Equity represents the owner's residual interest in the assets of a company after deducting liabilities." }
+            ],
+            hospitality: [
+                { question: "What does RevPAR measure?", options: ["Customer satisfaction", "Revenue per available room", "Employee performance", "Food quality"], correct: 1, explanation: "RevPAR assesses a hotel's ability to fill its available rooms at an average rate." },
+                { question: "What is the primary focus of yield management?", options: ["Customer service", "Employee training", "Maximizing revenue through pricing and inventory control", "Marketing"], correct: 2, explanation: "Yield management aims to sell the right inventory unit to the right customer at the right time." },
+                { question: "What is front-of-house in hospitality?", options: ["Kitchen area", "Customer-facing areas", "Storage rooms", "Administrative offices"], correct: 1, explanation: "Front-of-house refers to all areas that guests can see, like lobbies and dining rooms." },
+                { question: "What is ADR in the hotel industry?", options: ["Average Daily Rate", "Annual Depreciation Rate", "Advanced Dining Reservation", "Automatic Door Release"], correct: 0, explanation: "ADR is the average rental income per paid occupied room in a given time period." },
+                { question: "What is the purpose of a PMS in hotels?", options: ["Point of Marketing System", "Property Management System", "Personal Messaging Service", "Profit Monitoring Software"], correct: 1, explanation: "A Property Management System automates front desk, reservations, housekeeping and billing operations." },
+                { question: "What does HACCP stand for?", options: ["Hotel And Conference Center Protocol", "Hazard Analysis Critical Control Points", "Hospitality Administration Certified Course Program", "High Accuracy Customer Care Plan"], correct: 1, explanation: "HACCP is a food safety management system that identifies and controls biological, chemical, and physical hazards." },
+                { question: "What is occupancy rate?", options: ["The percentage of employees present", "The percentage of available rooms that are occupied", "The rate of customer complaints", "The speed of room cleaning"], correct: 1, explanation: "Occupancy rate is a key metric that shows the proportion of available rooms that are occupied over a period." },
+                { question: "What is cross-selling in hospitality?", options: ["Selling a product at a loss", "Suggesting additional products or services to a guest", "Canceling a reservation", "Training new employees"], correct: 1, explanation: "Cross-selling involves recommending complementary services (spa, dining, tours) to increase per-guest revenue." },
+                { question: "What is a rack rate?", options: ["The lowest available rate", "The published standard rate for a hotel room", "A discount rate for groups", "An employee-only rate"], correct: 1, explanation: "The rack rate is the full, standard price of a hotel room before any discounts are applied." },
+                { question: "What does F&B stand for?", options: ["Finance & Banking", "Food & Beverage", "Franchise & Business", "Facilities & Buildings"], correct: 1, explanation: "F&B refers to the Food and Beverage department, a major revenue source in hospitality." }
+            ],
+            entrepreneurship: [
+                { question: "What is a value proposition?", options: ["Company stock price", "The unique value a product provides to customers", "Marketing budget", "Business location"], correct: 1, explanation: "It's a clear statement that explains how your product solves customers' problems or improves their situation." },
+                { question: "What is bootstrapping?", options: ["Getting venture capital", "Starting a business with personal funds", "Hiring employees", "Creating a website"], correct: 1, explanation: "Bootstrapping is building a company from the ground up with nothing but personal savings." },
+                { question: "What is market validation?", options: ["Testing if there's market need", "Setting prices", "Creating ads", "Hiring staff"], correct: 0, explanation: "Market validation is the process of presenting a concept to its target market and learning from prospective buyers." },
+                { question: "What is an MVP?", options: ["Most Valuable Product", "Minimum Viable Product", "Maximum Value Proposition", "Market Verification Process"], correct: 1, explanation: "An MVP is the simplest version of a product with just enough features to satisfy early customers and provide feedback." },
+                { question: "What is venture capital?", options: ["A bank loan", "Private equity financing provided to startups with growth potential", "Personal savings", "Government grant"], correct: 1, explanation: "Venture capital is funding given to startups in exchange for equity, typically by professional investors." },
+                { question: "What is a pivot in business?", options: ["A dance move", "A fundamental change in business strategy or model", "Hiring a new CEO", "Increasing prices"], correct: 1, explanation: "A pivot is a structured correction where a startup changes its product, strategy, or business model." },
+                { question: "What is a business incubator?", options: ["A device for hatching eggs", "An organization that helps startups grow", "A type of insurance", "A marketing tool"], correct: 1, explanation: "Business incubators provide resources, mentoring, and office space to help startups succeed." },
+                { question: "What does scalability mean?", options: ["The ability to weigh products", "The ability to grow without being hampered by structure or resources", "The size of a building", "The number of employees"], correct: 1, explanation: "Scalability is the capacity of a business to increase revenue without a proportional increase in costs." },
+                { question: "What is an elevator pitch?", options: ["A pitch given in an elevator", "A brief persuasive speech about a business idea (30-60 seconds)", "A formal business plan", "A type of investment"], correct: 1, explanation: "An elevator pitch is a concise summary designed to quickly explain an idea and spark interest." },
+                { question: "What is due diligence?", options: ["A legal obligation", "A comprehensive appraisal of a business before investment", "A type of insurance", "An employee training program"], correct: 1, explanation: "Due diligence is the investigation and analysis done before an acquisition, investment, or business deal." }
+            ],
+            management: [
+                { question: "What does SWOT stand for?", options: ["Sales, Wealth, Operations, Taxes", "Strengths, Weaknesses, Opportunities, Threats", "Strategy, Work, Organization, Team", "System, Workflow, Order, Time"], correct: 1, explanation: "SWOT analysis is a strategic planning technique for identifying Strengths, Weaknesses, Opportunities, and Threats." },
+                { question: "What is a KPI?", options: ["Key Performance Indicator", "Key Product Information", "Known Problem Issue", "Key Personnel Interview"], correct: 0, explanation: "A Key Performance Indicator measures how effectively a company achieves key objectives." },
+                { question: "Which is a primary function of management?", options: ["Coding", "Controlling", "Cooking", "Cleaning"], correct: 1, explanation: "The four primary functions are planning, organizing, leading, and controlling." },
+                { question: "What is delegation?", options: ["Eliminating tasks", "Assigning responsibility and authority to another person", "Doing everything yourself", "Quitting a job"], correct: 1, explanation: "Delegation involves entrusting tasks and authority to subordinates while retaining accountability." },
+                { question: "What is supply chain management?", options: ["Managing a chain of stores", "Overseeing the flow of goods from raw materials to final product", "A type of accounting", "Human resources management"], correct: 1, explanation: "Supply chain management coordinates all activities from sourcing to delivery to optimize efficiency and cost." },
+                { question: "What is Total Quality Management (TQM)?", options: ["A financial strategy", "A continuous improvement approach involving all employees", "A hiring process", "A marketing plan"], correct: 1, explanation: "TQM focuses on long-term success through customer satisfaction with all organizational members participating in improvement." },
+                { question: "What is a mission statement?", options: ["A company's financial goals", "A formal summary of a company's purpose and direction", "An employee handbook", "A marketing slogan"], correct: 1, explanation: "A mission statement defines the organization's business, objectives, and approach to reach those objectives." },
+                { question: "What is benchmarking?", options: ["Setting a park bench", "Comparing business processes against industry best practices", "A type of funding", "Employee evaluation"], correct: 1, explanation: "Benchmarking involves measuring your performance against the best in your industry to identify areas for improvement." },
+                { question: "What is stakeholder management?", options: ["Managing investors only", "Systematically managing the expectations and needs of all parties affected by a project", "Stock market trading", "Employee scheduling"], correct: 1, explanation: "Stakeholder management involves identifying, analyzing, and strategically engaging anyone affected by the organization's decisions." },
+                { question: "What is corporate social responsibility (CSR)?", options: ["Maximizing profits only", "A company's commitment to manage social, environmental, and economic effects responsibly", "A tax strategy", "A hiring practice"], correct: 1, explanation: "CSR means a business considers the interests of society by taking responsibility for its impact on stakeholders." }
+            ],
+            personal_finance: [
+                { question: "What is compound interest?", options: ["Interest on principal only", "Interest on principal and accumulated interest", "A fixed fee", "A penalty charge"], correct: 1, explanation: "Compound interest is calculated on the initial principal plus all accumulated interest from previous periods." },
+                { question: "What is the 50/30/20 budget rule?", options: ["50% Needs, 30% Wants, 20% Savings", "50% Savings, 30% Needs, 20% Wants", "50% Wants, 30% Savings, 20% Needs", "50% Debt, 30% Savings, 20% Needs"], correct: 0, explanation: "The 50/30/20 rule recommends spending 50% on needs, 30% on wants, and 20% on savings." },
+                { question: "What is an emergency fund?", options: ["Money for vacations", "Money set aside for unexpected costs", "Money for investment", "Money for retirement"], correct: 1, explanation: "An emergency fund is a stash of money set aside to cover financial surprises life throws your way." },
+                { question: "What is a credit score?", options: ["Your bank balance", "A number representing creditworthiness based on credit history", "Your annual salary", "The number of credit cards you own"], correct: 1, explanation: "A credit score (usually 300-850) predicts how likely you are to repay borrowed money on time." },
+                { question: "What is the Rule of 72?", options: ["A tax rule", "A quick way to estimate how long an investment takes to double", "A retirement age guideline", "A budgeting method"], correct: 1, explanation: "Divide 72 by the annual interest rate to estimate the number of years it takes for money to double." },
+                { question: "What is a 401(k)?", options: ["A type of car", "An employer-sponsored retirement savings plan", "A tax form", "A bank account type"], correct: 1, explanation: "A 401(k) is a tax-advantaged retirement plan offered by employers where contributions are often matched." },
+                { question: "What is a mutual fund?", options: ["A personal savings account", "An investment pooling money from many investors to buy securities", "A government bond", "A type of insurance"], correct: 1, explanation: "Mutual funds pool money from many investors to invest in a diversified portfolio managed by professionals." },
+                { question: "What is an APR?", options: ["Annual Profit Ratio", "Annual Percentage Rate", "Average Payment Rate", "Adjusted Price Range"], correct: 1, explanation: "APR represents the annual cost of borrowing money, including interest and fees, expressed as a percentage." },
+                { question: "What does 'pay yourself first' mean?", options: ["Spend all your money on yourself", "Prioritize saving/investing before paying bills", "Never pay taxes", "Borrow money for personal use"], correct: 1, explanation: "It means automatically setting aside a portion of income for savings before spending on anything else." },
+                { question: "What is asset allocation?", options: ["Selling all assets", "Dividing investments among different asset categories", "Buying only one type of stock", "Keeping all money in cash"], correct: 1, explanation: "Asset allocation is a strategy that balances risk and reward by distributing investments across stocks, bonds, and cash." }
+            ]
+        };
+
+        /* ========================================
+           DECA EVENTS BY CLUSTER (for Roleplays)
+        ======================================== */
+        const decaEvents = {
+            marketing: [
+                { name: "Principles of Marketing", type: "individual", prepMin: 10 },
+                { name: "Apparel and Accessories Marketing", type: "individual", prepMin: 10 },
+                { name: "Sports and Entertainment Marketing", type: "individual", prepMin: 10 },
+                { name: "Marketing Communications", type: "team", prepMin: 30 },
+                { name: "Professional Selling", type: "individual", prepMin: 10 },
+                { name: "Integrated Marketing Campaign – Event", type: "team", prepMin: 30 }
+            ],
+            finance: [
+                { name: "Principles of Finance", type: "individual", prepMin: 10 },
+                { name: "Accounting Applications", type: "individual", prepMin: 10 },
+                { name: "Business Finance", type: "individual", prepMin: 10 },
+                { name: "Financial Consulting", type: "team", prepMin: 30 },
+                { name: "Securities and Investments", type: "individual", prepMin: 10 }
+            ],
+            hospitality: [
+                { name: "Principles of Hospitality and Tourism", type: "individual", prepMin: 10 },
+                { name: "Hotel and Lodging Management", type: "individual", prepMin: 10 },
+                { name: "Quick Serve Restaurant Management", type: "individual", prepMin: 10 },
+                { name: "Restaurant and Food Service Management", type: "individual", prepMin: 10 },
+                { name: "Travel and Tourism", type: "team", prepMin: 30 }
+            ],
+            entrepreneurship: [
+                { name: "Entrepreneurship", type: "individual", prepMin: 10 },
+                { name: "Franchise Business Plan", type: "team", prepMin: 30 },
+                { name: "Innovation Plan", type: "team", prepMin: 30 },
+                { name: "Start-Up Business Plan", type: "team", prepMin: 30 },
+                { name: "Independent Business Plan", type: "individual", prepMin: 10 }
+            ],
+            management: [
+                { name: "Principles of Business Management and Administration", type: "individual", prepMin: 10 },
+                { name: "Business Law and Ethics", type: "individual", prepMin: 10 },
+                { name: "Human Resources Management", type: "individual", prepMin: 10 },
+                { name: "Management Team Decision Making", type: "team", prepMin: 30 },
+                { name: "Operations Research", type: "individual", prepMin: 10 }
+            ],
+            personal_finance: [
+                { name: "Personal Financial Literacy", type: "individual", prepMin: 10 },
+                { name: "Financial Literacy Promotion Project", type: "team", prepMin: 30 }
+            ]
+        };
+
+        /* ========================================
+           INITIALISE
+        ======================================== */
+        function init() {
+            showTab('dashboard');
+            updateCardDisplay();
+        }
+
+        /* ========================================
+           TAB NAVIGATION
+        ======================================== */
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-500', 'text-white');
+                btn.classList.add('text-gray-700');
+            });
+            const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            activeBtn.classList.remove('text-gray-700');
+            activeBtn.classList.add('bg-indigo-500', 'text-white');
+            currentTab = tabName;
+        }
+
+        /* ========================================
+           FLASHCARD FUNCTIONS
+        ======================================== */
+        function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+
+        function updateCardDisplay() {
+            const cat = document.getElementById('categorySelect').value;
+            const cards = flashcards[cat];
+            const card = cards[currentCardIndex];
+            document.getElementById('cardQuestion').textContent = card.question;
+            document.getElementById('cardAnswer').textContent = card.answer;
+            document.getElementById('cardCounter').textContent = `${currentCardIndex + 1} / ${cards.length}`;
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+        function nextCard() {
+            const cards = flashcards[document.getElementById('categorySelect').value];
+            currentCardIndex = (currentCardIndex + 1) % cards.length;
+            updateCardDisplay();
+        }
+        function previousCard() {
+            const cards = flashcards[document.getElementById('categorySelect').value];
+            currentCardIndex = (currentCardIndex - 1 + cards.length) % cards.length;
+            updateCardDisplay();
+        }
+        function markCard(d) { nextCard(); }
+
+        /* ========================================
+           QUIZ – MODE SELECTION
+        ======================================== */
+        function selectQuizMode(mode) {
+            quizMode = mode;
+            const sCard = document.getElementById('modeCardSingle');
+            const bCard = document.getElementById('modeCardBenchmark');
+            if (mode === 'single') {
+                sCard.className = 'cursor-pointer border-2 border-indigo-500 bg-indigo-50 rounded-xl p-6 transition-all hover:shadow-lg';
+                bCard.className = 'cursor-pointer border-2 border-gray-200 bg-white rounded-xl p-6 transition-all hover:shadow-lg';
+                sCard.querySelector('i').className = 'fas fa-arrow-right text-3xl text-indigo-500 mb-3';
+                bCard.querySelector('i').className = 'fas fa-list-ol text-3xl text-gray-400 mb-3';
+            } else {
+                bCard.className = 'cursor-pointer border-2 border-indigo-500 bg-indigo-50 rounded-xl p-6 transition-all hover:shadow-lg';
+                sCard.className = 'cursor-pointer border-2 border-gray-200 bg-white rounded-xl p-6 transition-all hover:shadow-lg';
+                bCard.querySelector('i').className = 'fas fa-list-ol text-3xl text-indigo-500 mb-3';
+                sCard.querySelector('i').className = 'fas fa-arrow-right text-3xl text-gray-400 mb-3';
+            }
+        }
+
+        /* ========================================
+           QUIZ – START
+        ======================================== */
+        function startQuiz(category) {
+            quizCategory = category;
+            currentQuizQuestion = 0;
+            quizScore = 0;
+            selectedAnswer = null;
+            feedbackShown = false;
+
+            const baseQ = quizQuestions[category];
+            if (quizMode === 'benchmark') {
+                // Build a 100-question pool by repeating + shuffling
+                let pool = [];
+                while (pool.length < 100) {
+                    pool = pool.concat(baseQ.map(q => ({ ...q })));
+                }
+                pool = pool.slice(0, 100);
+                // Shuffle
+                for (let i = pool.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [pool[i], pool[j]] = [pool[j], pool[i]];
+                }
+                activeQuestions = pool;
+            } else {
+                // Shuffle the base questions for single mode
+                activeQuestions = [...baseQ].sort(() => Math.random() - 0.5);
+            }
+            userAnswers = new Array(activeQuestions.length).fill(null);
+
+            document.getElementById('quizStart').classList.add('hidden');
+            document.getElementById('quizContent').classList.remove('hidden');
+            document.getElementById('quizResults').classList.add('hidden');
+
+            document.getElementById('totalQuestions').textContent = activeQuestions.length;
+            document.getElementById('quizModeLabel').textContent = quizMode === 'single' ? 'One-by-One' : 'Benchmark';
+
+            // Benchmark: show nav, hide normal next in favour of submit at end
+            if (quizMode === 'benchmark') {
+                document.getElementById('benchmarkNav').classList.remove('hidden');
+                document.getElementById('btnSubmitBenchmark').classList.remove('hidden');
+                buildQuestionGrid();
+            } else {
+                document.getElementById('benchmarkNav').classList.add('hidden');
+                document.getElementById('btnSubmitBenchmark').classList.add('hidden');
+            }
+
+            loadQuizQuestion();
+            startQuizTimer();
+        }
+
+        /* ========================================
+           QUIZ – LOAD QUESTION
+        ======================================== */
+        function loadQuizQuestion() {
+            const q = activeQuestions[currentQuizQuestion];
+            document.getElementById('questionNumber').textContent = currentQuizQuestion + 1;
+            document.getElementById('quizQuestion').textContent = q.question;
+
+            const opts = document.getElementById('quizOptions');
+            opts.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer';
+                div.id = `quizOpt${idx}`;
+                div.innerHTML = `<label class="flex items-center cursor-pointer"><input type="radio" name="quizAnswer" value="${idx}" class="mr-3" onchange="selectAnswer(${idx})"><span>${opt}</span></label>`;
+                opts.appendChild(div);
+            });
+
+            // Restore previously selected answer (for navigation)
+            if (userAnswers[currentQuizQuestion] !== null) {
+                const radio = opts.querySelector(`input[value="${userAnswers[currentQuizQuestion]}"]`);
+                if (radio) radio.checked = true;
+                selectedAnswer = userAnswers[currentQuizQuestion];
+            } else {
+                selectedAnswer = null;
+            }
+
+            // Update progress
+            const progress = ((currentQuizQuestion + 1) / activeQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+
+            // Hide feedback area for new question
+            feedbackShown = false;
+            document.getElementById('feedbackArea').classList.add('hidden');
+
+            // Update next button text for single mode on last question
+            if (quizMode === 'single') {
+                const btn = document.getElementById('btnNextQuestion');
+                if (currentQuizQuestion >= activeQuestions.length - 1) {
+                    btn.innerHTML = 'Finish<i class="fas fa-flag-checkered ml-2"></i>';
+                } else {
+                    btn.innerHTML = 'Next<i class="fas fa-chevron-right ml-2"></i>';
+                }
+            }
+
+            // Update grid colours
+            if (quizMode === 'benchmark') updateQuestionGrid();
+        }
+
+        function selectAnswer(idx) {
+            selectedAnswer = idx;
+            userAnswers[currentQuizQuestion] = idx;
+
+            // One-by-One: show immediate feedback
+            if (quizMode === 'single' && !feedbackShown) {
+                showSingleFeedback();
+            }
+        }
+
+        /* ========================================
+           QUIZ – ONE-BY-ONE FEEDBACK
+        ======================================== */
+        function showSingleFeedback() {
+            feedbackShown = true;
+            const q = activeQuestions[currentQuizQuestion];
+            const fb = document.getElementById('feedbackArea');
+            fb.classList.remove('hidden');
+
+            // Color all options
+            q.options.forEach((_, idx) => {
+                const el = document.getElementById(`quizOpt${idx}`);
+                if (idx === q.correct) {
+                    el.className = 'p-4 bg-green-100 border-2 border-green-500 rounded-lg';
+                } else if (idx === selectedAnswer && idx !== q.correct) {
+                    el.className = 'p-4 bg-red-100 border-2 border-red-400 rounded-lg';
+                }
+                // Disable further clicks
+                el.querySelector('input').disabled = true;
+            });
+
+            if (selectedAnswer === q.correct) {
+                fb.className = 'mt-6 rounded-lg p-4 bg-green-50 border border-green-300';
+                document.getElementById('feedbackIcon').innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+                document.getElementById('feedbackText').textContent = 'Correct!';
+                document.getElementById('feedbackText').className = 'font-semibold mb-1 text-green-700';
+            } else {
+                fb.className = 'mt-6 rounded-lg p-4 bg-red-50 border border-red-300';
+                document.getElementById('feedbackIcon').innerHTML = '<i class="fas fa-times-circle text-red-500"></i>';
+                document.getElementById('feedbackText').textContent = `Incorrect — The correct answer is: ${q.options[q.correct]}`;
+                document.getElementById('feedbackText').className = 'font-semibold mb-1 text-red-700';
+            }
+            document.getElementById('feedbackExplanation').textContent = q.explanation;
+        }
+
+        /* ========================================
+           QUIZ – NAVIGATION
+        ======================================== */
+        function nextQuestion() {
+            if (quizMode === 'single') {
+                // Must answer and see feedback before advancing
+                if (selectedAnswer === null) {
+                    alert('Please select an answer.');
+                    return;
+                }
+                if (!feedbackShown) { showSingleFeedback(); return; }
+                // Score
+                if (selectedAnswer === activeQuestions[currentQuizQuestion].correct) quizScore++;
+                currentQuizQuestion++;
+                if (currentQuizQuestion >= activeQuestions.length) { showQuizResults(); return; }
+            } else {
+                // Benchmark – just advance
+                if (currentQuizQuestion < activeQuestions.length - 1) currentQuizQuestion++;
+            }
+            loadQuizQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuizQuestion > 0) {
+                currentQuizQuestion--;
+                loadQuizQuestion();
+            }
+        }
+
+        /* ========================================
+           QUIZ – BENCHMARK SUBMIT
+        ======================================== */
+        function submitBenchmark() {
+            if (!confirm('Submit your exam? You will not be able to change answers.')) return;
+            finishBenchmark();
+        }
+
+        function finishBenchmark() {
+            quizScore = 0;
+            activeQuestions.forEach((q, i) => {
+                if (userAnswers[i] === q.correct) quizScore++;
+            });
+            showQuizResults();
+        }
+
+        /* ========================================
+           QUIZ – QUESTION GRID (benchmark)
+        ======================================== */
+        function buildQuestionGrid() {
+            const grid = document.getElementById('questionGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < activeQuestions.length; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'w-8 h-8 text-xs rounded border border-gray-300 bg-gray-100 hover:bg-indigo-100 transition-colors';
+                btn.textContent = i + 1;
+                btn.onclick = () => { currentQuizQuestion = i; loadQuizQuestion(); };
+                grid.appendChild(btn);
+            }
+        }
+        function updateQuestionGrid() {
+            const grid = document.getElementById('questionGrid');
+            const btns = grid.querySelectorAll('button');
+            btns.forEach((btn, i) => {
+                if (i === currentQuizQuestion) {
+                    btn.className = 'w-8 h-8 text-xs rounded border-2 border-indigo-600 bg-indigo-500 text-white font-bold';
+                } else if (userAnswers[i] !== null) {
+                    btn.className = 'w-8 h-8 text-xs rounded border border-green-500 bg-green-100 text-green-800';
+                } else {
+                    btn.className = 'w-8 h-8 text-xs rounded border border-gray-300 bg-gray-100 hover:bg-indigo-100 transition-colors';
+                }
+            });
+        }
+        function toggleQuestionGrid() {
+            const g = document.getElementById('questionGrid');
+            g.classList.toggle('hidden');
+            if (!g.classList.contains('hidden')) g.classList.add('flex');
+            else g.classList.remove('flex');
+        }
+
+        /* ========================================
+           QUIZ – RESULTS
+        ======================================== */
+        function showQuizResults() {
+            clearInterval(quizTimer);
+            document.getElementById('quizContent').classList.add('hidden');
+            document.getElementById('quizResults').classList.remove('hidden');
+
+            const total = activeQuestions.length;
+            document.getElementById('quizScore').textContent = `${quizScore}/${total}`;
+            const pct = Math.round((quizScore / total) * 100);
+            document.getElementById('quizResultPercent').textContent = `${pct}%${pct >= 80 ? ' 🎉 Excellent!' : pct >= 60 ? ' 👍 Good job!' : ' 📚 Keep studying!'}`;
+
+            // Time taken
+            const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+            const mm = Math.floor(elapsed / 60);
+            const ss = elapsed % 60;
+            document.getElementById('quizTimeTaken').textContent = `Time taken: ${mm}m ${ss}s`;
+
+            // Build wrong-answer review
+            const reviewSection = document.getElementById('reviewSection');
+            const reviewList = document.getElementById('reviewList');
+            reviewList.innerHTML = '';
+            let wrongCount = 0;
+
+            activeQuestions.forEach((q, i) => {
+                const userAns = userAnswers[i];
+                if (userAns !== q.correct) {
+                    wrongCount++;
+                    const div = document.createElement('div');
+                    div.className = 'border border-red-200 rounded-lg p-4 bg-red-50';
+                    div.innerHTML = `
+                        <p class="font-semibold text-gray-800 mb-2">Q${i + 1}: ${q.question}</p>
+                        <p class="text-sm text-red-600 mb-1"><i class="fas fa-times mr-1"></i>Your answer: ${userAns !== null ? q.options[userAns] : '<em>No answer</em>'}</p>
+                        <p class="text-sm text-green-700 mb-1"><i class="fas fa-check mr-1"></i>Correct answer: ${q.options[q.correct]}</p>
+                        <p class="text-sm text-gray-600 italic"><i class="fas fa-info-circle mr-1"></i>${q.explanation}</p>
+                    `;
+                    reviewList.appendChild(div);
+                }
+            });
+
+            if (wrongCount > 0) {
+                reviewSection.classList.remove('hidden');
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('quizResults').classList.add('hidden');
+            document.getElementById('quizStart').classList.remove('hidden');
+        }
+
+        /* ========================================
+           QUIZ – TIMER
+        ======================================== */
+        function startQuizTimer() {
+            quizStartTime = Date.now();
+            if (quizMode === 'benchmark') {
+                // Countdown from 90 mins
+                updateBenchmarkTimerDisplay();
+                quizTimer = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                    const remaining = benchmarkTimeLimit - elapsed;
+                    if (remaining <= 0) {
+                        clearInterval(quizTimer);
+                        document.getElementById('timer').textContent = '00:00';
+                        alert('Time is up! Submitting your exam.');
+                        finishBenchmark();
+                        return;
+                    }
+                    const m = Math.floor(remaining / 60);
+                    const s = remaining % 60;
+                    document.getElementById('timer').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                    // flash red in last 5 minutes
+                    if (remaining <= 300) {
+                        document.getElementById('timer').className = 'text-red-600 font-mono font-bold';
+                    }
+                }, 1000);
+            } else {
+                // Count up for single mode
+                quizTimer = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
+                    const m = Math.floor(elapsed / 60);
+                    const s = elapsed % 60;
+                    document.getElementById('timer').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+        }
+
+        function updateBenchmarkTimerDisplay() {
+            const m = Math.floor(benchmarkTimeLimit / 60);
+            document.getElementById('timer').textContent = `${m.toString().padStart(2, '0')}:00`;
+        }
+
+        /* ========================================
+           ROLEPLAY – EVENT OPTIONS
+        ======================================== */
+        function updateEventOptions() {
+            const cluster = document.getElementById('rpClusterSelect').value;
+            const sel = document.getElementById('rpEventSelect');
+            sel.innerHTML = '<option value="">— Select an event —</option>';
+            if (cluster && decaEvents[cluster]) {
+                decaEvents[cluster].forEach((ev, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.textContent = `${ev.name} (${ev.type === 'team' ? 'Team' : 'Individual'})`;
+                    sel.appendChild(opt);
+                });
+            }
+        }
+
+        /* ========================================
+           ROLEPLAY – GENERATE
+        ======================================== */
+        async function generateRoleplay() {
+            const cluster = document.getElementById('rpClusterSelect').value;
+            const eventIdx = document.getElementById('rpEventSelect').value;
+            if (!cluster || eventIdx === '') { alert('Please select both a cluster and an event.'); return; }
+
+            const apiKey = localStorage.getItem('openai_api_key');
+            if (!apiKey) { alert('Please set your OpenAI API key in Settings first.'); return; }
+
+            const event = decaEvents[cluster][parseInt(eventIdx)];
+
+            document.getElementById('rpStep1').classList.add('hidden');
+            document.getElementById('rpLoading').classList.remove('hidden');
+
+            const prompt = `You are a DECA roleplay scenario generator. Create a complex, realistic DECA roleplay scenario for the event "${event.name}" in the "${cluster}" cluster.
+
+Return a JSON object with exactly these fields:
+{
+  "scenario": "A detailed 3-5 paragraph roleplay scenario including the situation, background information, and specific challenge the participant must address. Include realistic business names, numbers, and context.",
+  "kpis": ["KPI 1", "KPI 2", "KPI 3", "KPI 4", "KPI 5"],
+  "skills": ["21st Century Skill 1", "21st Century Skill 2", "21st Century Skill 3", "21st Century Skill 4"]
+}
+
+Make the scenario challenging, detailed, and competition-ready. Respond ONLY with valid JSON, nothing else.`;
+
+            try {
+                const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [{ role: 'user', content: prompt }],
+                        temperature: 0.8,
+                        max_tokens: 1200
+                    })
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error?.message || 'API request failed');
+                }
+                const data = await res.json();
+                const text = data.choices[0].message.content.trim();
+                // Parse JSON
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error('Could not parse response as JSON.');
+                const parsed = JSON.parse(jsonMatch[0]);
+
+                rpCurrentPrompt = parsed.scenario;
+                document.getElementById('rpPromptText').textContent = parsed.scenario;
+
+                const kpiList = document.getElementById('rpKPIs');
+                kpiList.innerHTML = '';
+                (parsed.kpis || []).forEach(k => { const li = document.createElement('li'); li.textContent = k; kpiList.appendChild(li); });
+
+                const skillList = document.getElementById('rpSkills');
+                skillList.innerHTML = '';
+                (parsed.skills || []).forEach(s => { const li = document.createElement('li'); li.textContent = s; skillList.appendChild(li); });
+
+                // Set prep timer
+                rpPrepSecondsLeft = event.prepMin * 60;
+                const pm = Math.floor(rpPrepSecondsLeft / 60);
+                document.getElementById('rpPrepTimer').textContent = `${pm.toString().padStart(2, '0')}:00`;
+                document.getElementById('rpPrepStartBtn').disabled = false;
+
+                document.getElementById('rpLoading').classList.add('hidden');
+                document.getElementById('rpStep2').classList.remove('hidden');
+            } catch (err) {
+                document.getElementById('rpLoading').classList.add('hidden');
+                document.getElementById('rpStep1').classList.remove('hidden');
+                alert('Error generating roleplay: ' + err.message);
+            }
+        }
+
+        /* ========================================
+           ROLEPLAY – PREP TIMER
+        ======================================== */
+        function startPrepTimer() {
+            document.getElementById('rpPrepStartBtn').disabled = true;
+            rpPrepInterval = setInterval(() => {
+                rpPrepSecondsLeft--;
+                if (rpPrepSecondsLeft <= 0) {
+                    clearInterval(rpPrepInterval);
+                    goToRecording();
+                    return;
+                }
+                const m = Math.floor(rpPrepSecondsLeft / 60);
+                const s = rpPrepSecondsLeft % 60;
+                document.getElementById('rpPrepTimer').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                if (rpPrepSecondsLeft <= 60) document.getElementById('rpPrepTimer').className = 'text-5xl font-mono font-bold text-red-600 mb-3';
+            }, 1000);
+        }
+
+        function skipPrepTimer() {
+            clearInterval(rpPrepInterval);
+            goToRecording();
+        }
+
+        function goToRecording() {
+            document.getElementById('rpStep2').classList.add('hidden');
+            document.getElementById('rpStep3').classList.remove('hidden');
+            rpRecordSeconds = 0;
+            document.getElementById('rpRecordTimer').textContent = '00:00';
+            rpTranscript = '';
+            document.getElementById('rpTranscriptText').textContent = 'Listening…';
+            document.getElementById('rpTranscriptBox').classList.add('hidden');
+            document.getElementById('rpSubmitArea').classList.add('hidden');
+            document.getElementById('rpRecordBtn').classList.remove('hidden');
+            document.getElementById('rpStopBtn').classList.add('hidden');
+        }
+
+        /* ========================================
+           ROLEPLAY – SPEECH-TO-TEXT RECORDING
+        ======================================== */
+        function startRecording() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Your browser does not support Speech Recognition. Please use Chrome or Edge.');
+                return;
+            }
+
+            rpRecognition = new SpeechRecognition();
+            rpRecognition.continuous = true;
+            rpRecognition.interimResults = true;
+            rpRecognition.lang = 'en-US';
+
+            rpTranscript = '';
+            let interimText = '';
+
+            rpRecognition.onresult = (e) => {
+                let finalT = '';
+                let interimT = '';
+                for (let i = 0; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        finalT += e.results[i][0].transcript + ' ';
+                    } else {
+                        interimT += e.results[i][0].transcript;
+                    }
+                }
+                rpTranscript = finalT;
+                document.getElementById('rpTranscriptText').innerHTML =
+                    `<span class="text-gray-800">${finalT}</span><span class="text-gray-400 italic">${interimT}</span>`;
+            };
+
+            rpRecognition.onerror = (e) => {
+                if (e.error !== 'no-speech') console.error('Speech error:', e.error);
+            };
+
+            rpRecognition.onend = () => {
+                // Auto-restart if still supposed to be recording
+                if (document.getElementById('rpStopBtn').classList.contains('hidden') === false) {
+                    try { rpRecognition.start(); } catch (e) { }
+                }
+            };
+
+            rpRecognition.start();
+
+            // UI
+            document.getElementById('rpRecordBtn').classList.add('hidden');
+            document.getElementById('rpStopBtn').classList.remove('hidden');
+            document.getElementById('rpTranscriptBox').classList.remove('hidden');
+
+            rpRecordSeconds = 0;
+            rpRecordInterval = setInterval(() => {
+                rpRecordSeconds++;
+                const m = Math.floor(rpRecordSeconds / 60);
+                const s = rpRecordSeconds % 60;
+                document.getElementById('rpRecordTimer').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopRecording() {
+            clearInterval(rpRecordInterval);
+            if (rpRecognition) { rpRecognition.stop(); rpRecognition = null; }
+
+            document.getElementById('rpStopBtn').classList.add('hidden');
+            document.getElementById('rpRecordBtn').classList.remove('hidden');
+
+            if (rpTranscript.trim().length > 0) {
+                document.getElementById('rpSubmitArea').classList.remove('hidden');
+            } else {
+                alert('No speech was detected. Please try recording again.');
+            }
+        }
+
+        /* ========================================
+           ROLEPLAY – AI JUDGE
+        ======================================== */
+        async function submitToJudge() {
+            const apiKey = localStorage.getItem('openai_api_key');
+            if (!apiKey) { alert('Please set your OpenAI API key in Settings.'); return; }
+
+            document.getElementById('rpStep3').classList.add('hidden');
+            document.getElementById('rpJudgeLoading').classList.remove('hidden');
+
+            const judgePrompt = `You are an expert DECA competition judge. A student was given the following roleplay scenario and responded with a verbal presentation that was transcribed below.
+
+SCENARIO:
+${rpCurrentPrompt}
+
+STUDENT TRANSCRIPT:
+${rpTranscript}
+
+Evaluate the student's performance. Return a JSON object:
+{
+  "score": <integer 0-100>,
+  "feedback": "Detailed multi-paragraph feedback covering:
+  1. Overall impression
+  2. Strengths demonstrated
+  3. Areas for improvement
+  4. Specific suggestions for next time
+  5. How well they addressed the scenario challenge"
+}
+
+Be constructive but honest. A score of 70+ indicates a competent performance. Respond ONLY with valid JSON.`;
+
+            try {
+                const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [{ role: 'user', content: judgePrompt }],
+                        temperature: 0.6,
+                        max_tokens: 800
+                    })
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error?.message || 'API request failed');
+                }
+                const data = await res.json();
+                const text = data.choices[0].message.content.trim();
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error('Could not parse judge response.');
+                const parsed = JSON.parse(jsonMatch[0]);
+
+                document.getElementById('rpScoreValue').textContent = parsed.score;
+                // Colour the score circle
+                const circle = document.getElementById('rpScoreCircle');
+                if (parsed.score >= 80) {
+                    circle.className = 'w-24 h-24 rounded-full border-4 border-green-500 flex items-center justify-center';
+                    document.getElementById('rpScoreValue').className = 'text-3xl font-bold text-green-700';
+                } else if (parsed.score >= 60) {
+                    circle.className = 'w-24 h-24 rounded-full border-4 border-yellow-500 flex items-center justify-center';
+                    document.getElementById('rpScoreValue').className = 'text-3xl font-bold text-yellow-700';
+                } else {
+                    circle.className = 'w-24 h-24 rounded-full border-4 border-red-500 flex items-center justify-center';
+                    document.getElementById('rpScoreValue').className = 'text-3xl font-bold text-red-700';
+                }
+
+                document.getElementById('rpFeedbackText').textContent = parsed.feedback;
+
+                document.getElementById('rpJudgeLoading').classList.add('hidden');
+                document.getElementById('rpStep4').classList.remove('hidden');
+            } catch (err) {
+                document.getElementById('rpJudgeLoading').classList.add('hidden');
+                document.getElementById('rpStep3').classList.remove('hidden');
+                alert('Error from AI Judge: ' + err.message);
+            }
+        }
+
+        /* ========================================
+           ROLEPLAY – RESET
+        ======================================== */
+        function resetRoleplay() {
+            clearInterval(rpPrepInterval);
+            clearInterval(rpRecordInterval);
+            if (rpRecognition) { rpRecognition.stop(); rpRecognition = null; }
+            document.getElementById('rpStep1').classList.remove('hidden');
+            document.getElementById('rpStep2').classList.add('hidden');
+            document.getElementById('rpStep3').classList.add('hidden');
+            document.getElementById('rpStep4').classList.add('hidden');
+            document.getElementById('rpLoading').classList.add('hidden');
+            document.getElementById('rpJudgeLoading').classList.add('hidden');
+            document.getElementById('rpPrepTimer').className = 'text-5xl font-mono font-bold text-indigo-600 mb-3';
+        }
+
+        /* ========================================
+           SETTINGS
+        ======================================== */
+        function saveSettings() {
+            const apiKey = document.getElementById('apiKeyInput').value;
+            if (apiKey) {
+                localStorage.setItem('openai_api_key', apiKey);
+            } else {
+                localStorage.removeItem('openai_api_key');
+            }
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        /* ========================================
+           EVENT LISTENERS & INIT
+        ======================================== */
+        document.getElementById('categorySelect').addEventListener('change', updateCardDisplay);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('openai_api_key');
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
+            init();
+        });
+    </script>
+</body>
+
+</html>
