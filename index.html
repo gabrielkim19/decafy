@@ -52,17 +52,82 @@
 </head>
 
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <div id="app" class="container mx-auto px-4 py-8 max-w-6xl pb-24">
+    <!-- Auth Overlay -->
+    <div id="authOverlay"
+        class="fixed inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 z-[100] flex items-center justify-center fade-in">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full m-4">
+            <div class="text-center mb-8">
+                <i class="fas fa-graduation-cap text-5xl text-indigo-600 mb-4"></i>
+                <h2 class="text-3xl font-bold text-gray-800">Welcome to Decafy</h2>
+                <p class="text-gray-600 mt-2">Sign in to save your progress</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-4" onsubmit="event.preventDefault(); window.handleAuthSubmit();">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="authEmail" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="authPassword" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div id="authNameField" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
+                    <input type="text" id="authName"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div id="authError"
+                    class="text-red-500 text-sm hidden font-medium text-center bg-red-50 p-2 rounded-lg"></div>
+                <button type="submit" id="authSubmitBtn"
+                    class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-200">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm">
+                <span id="authToggleText" class="text-gray-600">Don't have an account?</span>
+                <button onclick="window.toggleAuthMode()" id="authToggleBtn"
+                    class="text-indigo-600 font-semibold hover:underline ml-1">Sign Up</button>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-gray-200 text-center">
+                <p class="text-xs text-gray-500 mb-3">Requires Firebase config in settings to work properly.</p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="document.getElementById('settingsModal').classList.remove('hidden')"
+                        class="text-sm text-gray-600 hover:text-indigo-600"><i class="fas fa-cog mr-1"></i>Configure
+                        Firebase</button>
+                    <button onclick="window.skipAuth()" class="text-sm text-gray-600 hover:text-indigo-600"><i
+                            class="fas fa-forward mr-1"></i>Skip (Local only)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app" class="container mx-auto px-4 py-8 max-w-6xl pb-24 hidden">
         <!-- Header -->
         <header class="text-center mb-8 fade-in relative">
             <h1 class="text-4xl font-bold text-indigo-900 mb-2">
                 <i class="fas fa-graduation-cap mr-2"></i>Decafy
             </h1>
-            <button onclick="document.getElementById('settingsModal').classList.remove('hidden')"
-                class="absolute right-0 top-0 text-gray-400 hover:text-indigo-600 transition-colors pt-2">
-                <i class="fas fa-cog text-2xl"></i>
-            </button>
-            <p class="text-gray-600">Master business concepts for DECA competitions</p>
+            <div class="absolute right-0 top-0 flex items-center space-x-3 pt-2">
+                <div id="userProfile"
+                    class="hidden items-center space-x-2 text-gray-600 bg-white shadow-sm px-3 py-1 rounded-full border border-gray-100">
+                    <div class="w-7 h-7 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold text-sm"
+                        id="userAvatar">U</div>
+                    <span id="userName" class="text-sm font-medium hidden sm:inline">User</span>
+                    <button onclick="window.handleLogout()"
+                        class="text-xs text-red-500 hover:underline ml-1 border-l pl-2 border-gray-200">Sign
+                        Out</button>
+                </div>
+                <button onclick="document.getElementById('settingsModal').classList.remove('hidden')"
+                    class="text-gray-400 hover:text-indigo-600 transition-colors bg-white rounded-full w-9 h-9 flex items-center justify-center shadow-sm border border-gray-100">
+                    <i class="fas fa-cog text-xl mt-0.5"></i>
+                </button>
+            </div>
+            <p class="text-gray-600 mt-2">Master business concepts for DECA competitions</p>
         </header>
 
         <!-- Navigation Tabs -->
@@ -113,14 +178,15 @@
                     <div class="relative w-24 h-24 mx-auto mb-4">
                         <svg class="progress-ring w-24 h-24">
                             <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
-                            <circle cx="48" cy="48" r="36" stroke="#3b82f6" stroke-width="8" fill="none"
-                                stroke-dasharray="226" stroke-dashoffset="68" stroke-linecap="round" />
+                            <circle id="stat-marketing-ring" cx="48" cy="48" r="36" stroke="#3b82f6" stroke-width="8"
+                                fill="none" stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round"
+                                class="transition-all duration-1000" />
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl font-bold text-gray-800">70%</span>
+                            <span id="stat-marketing-pct" class="text-xl font-bold text-gray-800">0%</span>
                         </div>
                     </div>
-                    <p class="text-center text-gray-600">42/60 cards mastered</p>
+                    <p id="stat-marketing-text" class="text-center text-gray-600">0/60 cards mastered</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -131,14 +197,15 @@
                     <div class="relative w-24 h-24 mx-auto mb-4">
                         <svg class="progress-ring w-24 h-24">
                             <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
-                            <circle cx="48" cy="48" r="36" stroke="#10b981" stroke-width="8" fill="none"
-                                stroke-dasharray="226" stroke-dashoffset="113" stroke-linecap="round" />
+                            <circle id="stat-finance-ring" cx="48" cy="48" r="36" stroke="#10b981" stroke-width="8"
+                                fill="none" stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round"
+                                class="transition-all duration-1000" />
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl font-bold text-gray-800">50%</span>
+                            <span id="stat-finance-pct" class="text-xl font-bold text-gray-800">0%</span>
                         </div>
                     </div>
-                    <p class="text-center text-gray-600">30/60 cards mastered</p>
+                    <p id="stat-finance-text" class="text-center text-gray-600">0/60 cards mastered</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -149,14 +216,15 @@
                     <div class="relative w-24 h-24 mx-auto mb-4">
                         <svg class="progress-ring w-24 h-24">
                             <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
-                            <circle cx="48" cy="48" r="36" stroke="#8b5cf6" stroke-width="8" fill="none"
-                                stroke-dasharray="226" stroke-dashoffset="90" stroke-linecap="round" />
+                            <circle id="stat-hospitality-ring" cx="48" cy="48" r="36" stroke="#8b5cf6" stroke-width="8"
+                                fill="none" stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round"
+                                class="transition-all duration-1000" />
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl font-bold text-gray-800">60%</span>
+                            <span id="stat-hospitality-pct" class="text-xl font-bold text-gray-800">0%</span>
                         </div>
                     </div>
-                    <p class="text-center text-gray-600">36/60 cards mastered</p>
+                    <p id="stat-hospitality-text" class="text-center text-gray-600">0/60 cards mastered</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -167,14 +235,15 @@
                     <div class="relative w-24 h-24 mx-auto mb-4">
                         <svg class="progress-ring w-24 h-24">
                             <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
-                            <circle cx="48" cy="48" r="36" stroke="#eab308" stroke-width="8" fill="none"
-                                stroke-dasharray="226" stroke-dashoffset="45" stroke-linecap="round" />
+                            <circle id="stat-entrepreneurship-ring" cx="48" cy="48" r="36" stroke="#eab308"
+                                stroke-width="8" fill="none" stroke-dasharray="226" stroke-dashoffset="226"
+                                stroke-linecap="round" class="transition-all duration-1000" />
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl font-bold text-gray-800">80%</span>
+                            <span id="stat-entrepreneurship-pct" class="text-xl font-bold text-gray-800">0%</span>
                         </div>
                     </div>
-                    <p class="text-center text-gray-600">48/60 cards mastered</p>
+                    <p id="stat-entrepreneurship-text" class="text-center text-gray-600">0/60 cards mastered</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -185,14 +254,15 @@
                     <div class="relative w-24 h-24 mx-auto mb-4">
                         <svg class="progress-ring w-24 h-24">
                             <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
-                            <circle cx="48" cy="48" r="36" stroke="#6366f1" stroke-width="8" fill="none"
-                                stroke-dasharray="226" stroke-dashoffset="180" stroke-linecap="round" />
+                            <circle id="stat-management-ring" cx="48" cy="48" r="36" stroke="#6366f1" stroke-width="8"
+                                fill="none" stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round"
+                                class="transition-all duration-1000" />
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl font-bold text-gray-800">20%</span>
+                            <span id="stat-management-pct" class="text-xl font-bold text-gray-800">0%</span>
                         </div>
                     </div>
-                    <p class="text-center text-gray-600">12/60 cards mastered</p>
+                    <p id="stat-management-text" class="text-center text-gray-600">0/60 cards mastered</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -203,14 +273,15 @@
                     <div class="relative w-24 h-24 mx-auto mb-4">
                         <svg class="progress-ring w-24 h-24">
                             <circle cx="48" cy="48" r="36" stroke="#e5e7eb" stroke-width="8" fill="none" />
-                            <circle cx="48" cy="48" r="36" stroke="#ec4899" stroke-width="8" fill="none"
-                                stroke-dasharray="226" stroke-dashoffset="203" stroke-linecap="round" />
+                            <circle id="stat-personal_finance-ring" cx="48" cy="48" r="36" stroke="#ec4899"
+                                stroke-width="8" fill="none" stroke-dasharray="226" stroke-dashoffset="226"
+                                stroke-linecap="round" class="transition-all duration-1000" />
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl font-bold text-gray-800">10%</span>
+                            <span id="stat-personal_finance-pct" class="text-xl font-bold text-gray-800">0%</span>
                         </div>
                     </div>
-                    <p class="text-center text-gray-600">6/60 cards mastered</p>
+                    <p id="stat-personal_finance-text" class="text-center text-gray-600">0/60 cards mastered</p>
                 </div>
             </div>
 
@@ -219,48 +290,46 @@
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">
                     <i class="fas fa-history mr-2"></i>Recent Study Activity
                 </h2>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                            <span class="font-medium">Completed Marketing Quiz</span>
-                        </div>
-                        <span class="text-gray-500 text-sm">2 hours ago</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-layer-group text-blue-500 mr-3"></i>
-                            <span class="font-medium">Studied Finance Flashcards</span>
-                        </div>
-                        <span class="text-gray-500 text-sm">5 hours ago</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-trophy text-yellow-500 mr-3"></i>
-                            <span class="font-medium">Achieved 85% on Entrepreneurship Quiz</span>
-                        </div>
-                        <span class="text-gray-500 text-sm">Yesterday</span>
-                    </div>
-                </div>
+                <div id="recent-activity-list" class="space-y-3"></div>
             </div>
         </div>
 
         <!-- Flashcards Tab -->
         <div id="flashcards" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <h2 class="text-2xl font-bold text-gray-800">
                         <i class="fas fa-layer-group mr-2"></i>Study Flashcards
                     </h2>
-                    <select id="categorySelect"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="marketing">Marketing</option>
-                        <option value="finance">Finance</option>
-                        <option value="hospitality">Hospitality</option>
-                        <option value="entrepreneurship">Entrepreneurship</option>
-                        <option value="management">Business Management</option>
-                        <option value="personal_finance">Personal Financial Literacy</option>
-                    </select>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="categorySelect" onchange="loadDeck()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                            <option value="marketing">Marketing</option>
+                            <option value="finance">Finance</option>
+                            <option value="hospitality">Hospitality</option>
+                            <option value="entrepreneurship">Entrepreneurship</option>
+                            <option value="management">Business Management</option>
+                            <option value="personal_finance">Personal Financial Literacy</option>
+                        </select>
+                        <select id="difficultyFilter" onchange="loadDeck()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                            <option value="all">All Difficulties</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                        <select id="cardCount" onchange="loadDeck()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                            <option value="100">All Cards</option>
+                            <option value="10">10 Cards</option>
+                            <option value="20">20 Cards</option>
+                            <option value="50">50 Cards</option>
+                        </select>
+                        <button onclick="shuffleDeck()"
+                            class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors font-medium text-sm flex items-center h-[38px]">
+                            <i class="fas fa-random mr-1"></i>Shuffle
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Flashcard Container -->
@@ -621,22 +690,26 @@
                         <i class="fas fa-book mr-2"></i>Study Guides
                     </h3>
                     <div class="space-y-3">
-                        <div class="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
+                        <a href="https://www.deca.org/high-school" target="_blank"
+                            class="block p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-blue-800">Marketing Fundamentals</h4>
                             <p class="text-sm text-gray-600">Core concepts and terminology</p>
-                        </div>
-                        <div class="p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org/high-school" target="_blank"
+                            class="block p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-green-800">Financial Principles</h4>
                             <p class="text-sm text-gray-600">Understanding business finance</p>
-                        </div>
-                        <div class="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org/high-school" target="_blank"
+                            class="block p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-purple-800">Hospitality Management</h4>
                             <p class="text-sm text-gray-600">Service industry essentials</p>
-                        </div>
-                        <div class="p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org/high-school" target="_blank"
+                            class="block p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-yellow-800">Entrepreneurship</h4>
                             <p class="text-sm text-gray-600">Starting and growing businesses</p>
-                        </div>
+                        </a>
                     </div>
                 </div>
 
@@ -645,22 +718,26 @@
                         <i class="fas fa-video mr-2"></i>Video Resources
                     </h3>
                     <div class="space-y-3">
-                        <div class="p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors cursor-pointer">
+                        <a href="https://www.youtube.com/user/DECAInc" target="_blank"
+                            class="block p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-indigo-800">DECA Competition Tips</h4>
                             <p class="text-sm text-gray-600">Expert advice for success</p>
-                        </div>
-                        <div class="p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.youtube.com/watch?v=kR2_K8551T0" target="_blank"
+                            class="block p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-red-800">Role-Play Strategies</h4>
                             <p class="text-sm text-gray-600">Master the presentation format</p>
-                        </div>
-                        <div class="p-4 bg-teal-50 rounded-lg hover:bg-teal-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.youtube.com/watch?v=LqUuHovs2Jc" target="_blank"
+                            class="block p-4 bg-teal-50 rounded-lg hover:bg-teal-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-teal-800">Case Study Analysis</h4>
                             <p class="text-sm text-gray-600">Problem-solving techniques</p>
-                        </div>
-                        <div class="p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.youtube.com/user/DECAInc" target="_blank"
+                            class="block p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-orange-800">Exam Preparation</h4>
                             <p class="text-sm text-gray-600">Test-taking strategies</p>
-                        </div>
+                        </a>
                     </div>
                 </div>
 
@@ -669,22 +746,26 @@
                         <i class="fas fa-trophy mr-2"></i>Competition Events
                     </h3>
                     <div class="space-y-3">
-                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                        <a href="https://www.deca.org/high-school/competitive-events/" target="_blank"
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-gray-800">Individual Series Events</h4>
                             <p class="text-sm text-gray-600">Role-play competitions</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org/high-school/competitive-events/" target="_blank"
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-gray-800">Team Decision Making</h4>
                             <p class="text-sm text-gray-600">Collaborative case studies</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org/high-school/competitive-events/" target="_blank"
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-gray-800">Written Projects</h4>
                             <p class="text-sm text-gray-600">Business plans and research</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org/high-school/competitive-events/" target="_blank"
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-gray-800">Online Simulations</h4>
                             <p class="text-sm text-gray-600">Virtual business challenges</p>
-                        </div>
+                        </a>
                     </div>
                 </div>
 
@@ -693,22 +774,26 @@
                         <i class="fas fa-download mr-2"></i>Downloads
                     </h3>
                     <div class="space-y-3">
-                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                        <a href="https://www.deca.org/dictionary" target="_blank"
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-gray-800">DECA Glossary</h4>
                             <p class="text-sm text-gray-600">Complete terminology guide</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org/high-school/competitive-events/" target="_blank"
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-gray-800">Practice Exams</h4>
                             <p class="text-sm text-gray-600">Sample test questions</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org/high-school/competitive-events/" target="_blank"
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-gray-800">Score Sheets</h4>
                             <p class="text-sm text-gray-600">Evaluation rubrics</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                        </a>
+                        <a href="https://www.deca.org" target="_blank"
+                            class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
                             <h4 class="font-semibold text-gray-800">Study Schedule</h4>
                             <p class="text-sm text-gray-600">Preparation timeline</p>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -732,6 +817,21 @@
                     <input type="password" id="apiKeyInput"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="sk-...">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Firebase Config</label>
+                    <p class="text-xs text-gray-500 mb-3">Paste your entire Firebase config object here. Required for
+                        authentication and data sync.</p>
+                    <textarea id="firebaseConfigInput"
+                        class="w-full px-4 py-2 font-mono text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 h-32"
+                        placeholder='{
+  "apiKey": "AIzaSy...",
+  "authDomain": "...",
+  "projectId": "...",
+  "storageBucket": "...",
+  "messagingSenderId": "...",
+  "appId": "..."
+}'></textarea>
                 </div>
                 <div class="flex justify-end mt-6">
                     <button onclick="saveSettings()"
@@ -948,9 +1048,80 @@
            INITIALISE
         ======================================== */
         function init() {
+            if (!window.appStats) {
+                window.appStats = {
+                    history: [],
+                    mastered: {
+                        marketing: { mastered: 0, total: 60 },
+                        finance: { mastered: 0, total: 60 },
+                        hospitality: { mastered: 0, total: 60 },
+                        entrepreneurship: { mastered: 0, total: 60 },
+                        management: { mastered: 0, total: 60 },
+                        personal_finance: { mastered: 0, total: 60 }
+                    }
+                };
+            }
+            updateDashboard();
             showTab('dashboard');
-            updateCardDisplay();
+            loadDeck();
         }
+
+        function updateDashboard() {
+            if (!window.appStats) return;
+            const categories = ['marketing', 'finance', 'hospitality', 'entrepreneurship', 'management', 'personal_finance'];
+            categories.forEach(cat => {
+                const stat = window.appStats.mastered ? window.appStats.mastered[cat] : { mastered: 0, total: 60 };
+                const pct = stat ? Math.round((stat.mastered / stat.total) * 100) : 0;
+
+                const pctEl = document.getElementById(`stat-${cat}-pct`);
+                const textEl = document.getElementById(`stat-${cat}-text`);
+                const ringEl = document.getElementById(`stat-${cat}-ring`);
+
+                if (pctEl) pctEl.textContent = `${pct}%`;
+                if (textEl) textEl.textContent = `${stat ? stat.mastered : 0}/${stat ? stat.total : 60} cards mastered`;
+                if (ringEl) {
+                    const offset = 226 - (226 * pct) / 100;
+                    ringEl.setAttribute('stroke-dashoffset', offset);
+                }
+            });
+
+            const historyList = document.getElementById('recent-activity-list');
+            if (historyList && window.appStats.history) {
+                historyList.innerHTML = '';
+                if (window.appStats.history.length === 0) {
+                    historyList.innerHTML = '<p class="text-gray-500 text-sm mt-2">No recent activity yet. Start studying!</p>';
+                } else {
+                    window.appStats.history.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg fade-in';
+                        let icon = 'fas fa-info-circle text-gray-500';
+                        if (item.type === 'quiz') icon = 'fas fa-check-circle text-green-500';
+                        if (item.type === 'flashcard') icon = 'fas fa-layer-group text-blue-500';
+
+                        const tDiff = Math.floor((Date.now() - item.date) / 60000);
+                        let timeStr = tDiff < 1 ? 'Just now' : tDiff < 60 ? `${tDiff} min ago` : tDiff < 1440 ? `${Math.floor(tDiff / 60)} hrs ago` : `${Math.floor(tDiff / 1440)} days ago`;
+
+                        div.innerHTML = `
+                            <div class="flex items-center">
+                                <i class="${icon} mr-3"></i>
+                                <span class="font-medium">${item.text}</span>
+                            </div>
+                            <span class="text-gray-500 text-sm whitespace-nowrap ml-2">${timeStr}</span>
+                        `;
+                        historyList.appendChild(div);
+                    });
+                }
+            }
+        }
+
+        window.addActivity = (text, type) => {
+            if (!window.appStats) return;
+            if (!window.appStats.history) window.appStats.history = [];
+            window.appStats.history.unshift({ text, type, date: Date.now() });
+            if (window.appStats.history.length > 5) window.appStats.history.pop();
+            updateDashboard();
+            if (window.saveUserData) window.saveUserData({ stats: window.appStats });
+        };
 
         /* ========================================
            TAB NAVIGATION
@@ -971,28 +1142,91 @@
         /* ========================================
            FLASHCARD FUNCTIONS
         ======================================== */
+        let currentDeck = [];
+
+        function loadDeck(shuffle = false) {
+            const cat = document.getElementById('categorySelect').value;
+            const diffFilter = document.getElementById('difficultyFilter') ? document.getElementById('difficultyFilter').value : 'all';
+            const countFilter = document.getElementById('cardCount') ? parseInt(document.getElementById('cardCount').value) : 100;
+
+            let cards = [...flashcards[cat]];
+
+            // Filter by difficulty
+            if (diffFilter !== 'all') {
+                cards = cards.filter(c => {
+                    const diff = (window.appStats && window.appStats.flashcards && window.appStats.flashcards[cat] && window.appStats.flashcards[cat][c.question]) || 'medium';
+                    return diff === diffFilter;
+                });
+            }
+
+            // Shuffle
+            if (shuffle) {
+                for (let i = cards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cards[i], cards[j]] = [cards[j], cards[i]];
+                }
+            }
+
+            // Limit count
+            currentDeck = cards.slice(0, countFilter);
+            currentCardIndex = 0;
+
+            updateCardDisplay();
+        }
+
+        function shuffleDeck() {
+            loadDeck(true);
+        }
+
         function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
 
         function updateCardDisplay() {
-            const cat = document.getElementById('categorySelect').value;
-            const cards = flashcards[cat];
-            const card = cards[currentCardIndex];
+            if (currentDeck.length === 0) {
+                document.getElementById('cardQuestion').textContent = 'No cards match the filters.';
+                document.getElementById('cardAnswer').textContent = 'Change difficulty or category.';
+                document.getElementById('cardCounter').textContent = `0 / 0`;
+                document.getElementById('flashcard').classList.remove('flipped');
+                return;
+            }
+            const card = currentDeck[currentCardIndex];
             document.getElementById('cardQuestion').textContent = card.question;
             document.getElementById('cardAnswer').textContent = card.answer;
-            document.getElementById('cardCounter').textContent = `${currentCardIndex + 1} / ${cards.length}`;
+            document.getElementById('cardCounter').textContent = `${currentCardIndex + 1} / ${currentDeck.length}`;
             document.getElementById('flashcard').classList.remove('flipped');
         }
+
         function nextCard() {
-            const cards = flashcards[document.getElementById('categorySelect').value];
-            currentCardIndex = (currentCardIndex + 1) % cards.length;
+            if (currentDeck.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % currentDeck.length;
             updateCardDisplay();
         }
+
         function previousCard() {
-            const cards = flashcards[document.getElementById('categorySelect').value];
-            currentCardIndex = (currentCardIndex - 1 + cards.length) % cards.length;
+            if (currentDeck.length === 0) return;
+            currentCardIndex = (currentCardIndex - 1 + currentDeck.length) % currentDeck.length;
             updateCardDisplay();
         }
-        function markCard(d) { nextCard(); }
+
+        function markCard(difficulty) {
+            if (currentDeck.length === 0) return;
+            const cat = document.getElementById('categorySelect').value;
+            const currentQuestion = currentDeck[currentCardIndex].question;
+
+            if (!window.appStats) window.appStats = {};
+            if (!window.appStats.flashcards) window.appStats.flashcards = {};
+            if (!window.appStats.flashcards[cat]) window.appStats.flashcards[cat] = {};
+
+            window.appStats.flashcards[cat][currentQuestion] = difficulty;
+
+            if (difficulty === 'easy' && window.appStats.mastered[cat]) {
+                const max = window.appStats.mastered[cat].total || 60;
+                window.appStats.mastered[cat].mastered = Math.min(window.appStats.mastered[cat].mastered + 1, max);
+            }
+
+            window.addActivity(`Marked a ${cat} flashcard as ${difficulty}`, 'flashcard');
+
+            nextCard();
+        }
 
         /* ========================================
            QUIZ – MODE SELECTION
@@ -1251,6 +1485,8 @@
             document.getElementById('quizScore').textContent = `${quizScore}/${total}`;
             const pct = Math.round((quizScore / total) * 100);
             document.getElementById('quizResultPercent').textContent = `${pct}%${pct >= 80 ? ' 🎉 Excellent!' : pct >= 60 ? ' 👍 Good job!' : ' 📚 Keep studying!'}`;
+
+            window.addActivity(`Scored ${pct}% on ${quizMode === 'benchmark' ? 'Benchmark' : 'Practice'} Quiz (${quizCategory})`, 'quiz');
 
             // Time taken
             const elapsed = Math.floor((Date.now() - quizStartTime) / 1000);
@@ -1640,7 +1876,20 @@ Be constructive but honest. A score of 70+ indicates a competent performance. Re
             } else {
                 localStorage.removeItem('openai_api_key');
             }
+
+            const fbConfig = document.getElementById('firebaseConfigInput').value;
+            if (fbConfig) {
+                localStorage.setItem('firebase_config', fbConfig);
+            } else {
+                localStorage.removeItem('firebase_config');
+            }
+
             document.getElementById('settingsModal').classList.add('hidden');
+
+            if (fbConfig && fbConfig !== localStorage.getItem('firebase_config_last')) {
+                localStorage.setItem('firebase_config_last', fbConfig);
+                location.reload();
+            }
         }
 
         /* ========================================
@@ -1653,8 +1902,164 @@ Be constructive but honest. A score of 70+ indicates a competent performance. Re
             if (savedKey) {
                 document.getElementById('apiKeyInput').value = savedKey;
             }
-            init();
+
+            const savedFb = localStorage.getItem('firebase_config');
+            if (savedFb) {
+                document.getElementById('firebaseConfigInput').value = savedFb;
+            }
+
+            // App state init will trigger after firebase logic or skip
         });
+    </script>
+
+    <!-- FIREBASE AND AUTH MODULE -->
+    <script type="module">
+        let isSignUpMode = false;
+        let currentUser = null;
+        let firebaseAuth = null;
+        let firestoreDb = null;
+        let isOfflineMode = false;
+
+        window.toggleAuthMode = () => {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('authNameField').classList.toggle('hidden', !isSignUpMode);
+            document.getElementById('authSubmitBtn').textContent = isSignUpMode ? 'Sign Up' : 'Sign In';
+            document.getElementById('authToggleText').textContent = isSignUpMode ? 'Already have an account?' : 'Don\'t have an account?';
+            document.getElementById('authToggleBtn').textContent = isSignUpMode ? 'Sign In' : 'Sign Up';
+            if (isSignUpMode) { document.getElementById('authName').setAttribute('required', 'true'); }
+            else { document.getElementById('authName').removeAttribute('required'); }
+        };
+
+        window.skipAuth = () => {
+            isOfflineMode = true;
+            document.getElementById('authOverlay').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            document.getElementById('userProfile').classList.add('hidden');
+            if (typeof init === 'function') init();
+        };
+
+        window.handleLogout = async () => {
+            if (firebaseAuth) {
+                await firebaseAuth.signOut();
+                location.reload();
+            } else {
+                location.reload();
+            }
+        };
+
+        window.handleAuthSubmit = async () => {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const name = document.getElementById('authName').value;
+            const errDiv = document.getElementById('authError');
+            errDiv.classList.add('hidden');
+
+            if (!firebaseAuth) {
+                errDiv.textContent = 'Firebase is not initialized. Please configure it in Settings first or skip.';
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                if (isSignUpMode) {
+                    const cred = await window.fbCreateUserWithEmailAndPassword(firebaseAuth, email, password);
+                    if (name) {
+                        await window.fbUpdateProfile(cred.user, { displayName: name });
+                    }
+                    // Wait for auth state listener to trigger load
+                } else {
+                    await window.fbSignInWithEmailAndPassword(firebaseAuth, email, password);
+                }
+            } catch (err) {
+                errDiv.textContent = err.message || "Authentication failed.";
+                errDiv.classList.remove('hidden');
+            }
+        };
+
+        const initFirebase = async () => {
+            const configStr = localStorage.getItem('firebase_config');
+            if (!configStr) {
+                // If no config, just show auth screen until they skip or configure
+                return false;
+            }
+
+            try {
+                const config = JSON.parse(configStr);
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+                const { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
+                const { getFirestore, doc, setDoc, getDoc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+
+                const app = initializeApp(config);
+                firebaseAuth = getAuth(app);
+                firestoreDb = getFirestore(app);
+
+                window.fbSignInWithEmailAndPassword = signInWithEmailAndPassword;
+                window.fbCreateUserWithEmailAndPassword = createUserWithEmailAndPassword;
+                window.fbUpdateProfile = updateProfile;
+                window.fbDoc = doc;
+                window.fbSetDoc = setDoc;
+                window.fbGetDoc = getDoc;
+                window.fbUpdateDoc = updateDoc;
+
+                onAuthStateChanged(firebaseAuth, (user) => {
+                    currentUser = user;
+                    if (user) {
+                        document.getElementById('authOverlay').classList.add('hidden');
+                        document.getElementById('app').classList.remove('hidden');
+                        document.getElementById('userProfile').classList.remove('hidden');
+                        document.getElementById('userAvatar').textContent = user.displayName ? user.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+                        document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
+
+                        loadUserData(user.uid);
+                    } else {
+                        if (!isOfflineMode) {
+                            document.getElementById('authOverlay').classList.remove('hidden');
+                            document.getElementById('app').classList.add('hidden');
+                        }
+                    }
+                });
+                return true;
+            } catch (e) {
+                console.error("Firebase init error: ", e);
+                const errDiv = document.getElementById('authError');
+                errDiv.textContent = "Error initializing Firebase. Check your config JSON.";
+                errDiv.classList.remove('hidden');
+                return false;
+            }
+        };
+
+        async function loadUserData(uid) {
+            if (!firestoreDb) {
+                if (typeof init === 'function') init();
+                return;
+            }
+            try {
+                const userDoc = await window.fbGetDoc(window.fbDoc(firestoreDb, "users", uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    if (data.stats) window.appStats = data.stats;
+                } else {
+                    await window.fbSetDoc(window.fbDoc(firestoreDb, "users", uid), {
+                        createdAt: new Date(),
+                        stats: {}
+                    });
+                }
+                if (typeof init === 'function') init();
+            } catch (e) {
+                console.error("Error loading user data", e);
+                if (typeof init === 'function') init();
+            }
+        }
+
+        window.saveUserData = async (dataObj) => {
+            if (!firestoreDb || !currentUser || isOfflineMode) return;
+            try {
+                // Use setDoc with merge to update individual fields as needed
+                await window.fbSetDoc(window.fbDoc(firestoreDb, "users", currentUser.uid), dataObj, { merge: true });
+            } catch (e) { console.error("Error saving data", e); }
+        };
+
+        initFirebase();
     </script>
 </body>
 
